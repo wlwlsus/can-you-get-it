@@ -133,4 +133,24 @@ class UserServiceImplTest {
 		assertEquals(2, userInfoList.getContent().size());
 	}
 
+	@Test
+	void getPoint() {
+		// given: 사용자와 관련된 객체들을 생성 및 설정
+		long userId = 1L;
+		int cash = 100;
+		int expectedPoint = 100;
+
+		Passbook passbook = Passbook.builder().cash(cash).build();
+		Users user = Users.builder().userId(userId).passbookId(passbook).build();
+
+		when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+		when(passbookRepository.findById(user.getPassbookId().getPassbookId())).thenReturn(Optional.of(passbook));
+
+		// when: getPoint 메소드 실행
+		int actualPoint = userService.getPoint(userId);
+
+		// then: 올바른 포인트 값이 반환되었는지 확인
+		assertEquals(expectedPoint, actualPoint);
+	}
+
 }
