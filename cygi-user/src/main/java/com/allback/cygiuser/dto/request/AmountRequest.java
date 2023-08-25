@@ -15,4 +15,5 @@ import lombok.*;
 public class AmountRequest {
 	private long userId;
 	private int amount;
+
 }
