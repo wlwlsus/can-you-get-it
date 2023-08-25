@@ -108,4 +108,29 @@ class UserServiceImplTest {
 			assertEquals(ErrorMessage.NOT_ENOUGH_CASH.getErrorMessage(), e.getErrorMessage().get(0));
 		}
 	}
+
+	@Test
+	void getAllUserInfo() {
+		// given: Pageable 및 UserRepository에서 반환될 데이터를 설정합니다.
+		Pageable pageable = PageRequest.of(0, 10);
+
+		long userId = 1L;
+		long userId2 = 2L;
+		int cash = 1000;
+		Passbook passbook = Passbook.builder().cash(cash).build();
+		Passbook passbook2 = Passbook.builder().cash(cash).build();
+		Users user1 = Users.builder().userId(userId).passbookId(passbook).providerType(ProviderType.KAKAO).build();
+		Users user2 = Users.builder().userId(userId2).passbookId(passbook2).providerType(ProviderType.KAKAO).build();
+
+		List<Users> usersList = Arrays.asList(user1, user2);
+		when(userRepository.findAll(pageable)).thenReturn(new PageImpl<>(usersList, pageable, usersList.size()));
+
+		// when: getAllUserInfo 메소드 실행
+		Page<UserResDto> userInfoList = userService.getAllUserInfo(pageable.getPageNumber());
+
+		// then: 올바른 개수 반환되었는지 확인
+		assertEquals(1, userInfoList.getTotalPages());
+		assertEquals(2, userInfoList.getContent().size());
+	}
+
 }
